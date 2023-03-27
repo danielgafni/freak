@@ -66,7 +66,7 @@ curl -X PATCH localhost:4444/set/bar -d '{"foo": "baz"}'
 
 Because Freak is using `FastAPI`, it's possible to use auto-generated documentation to interact with the Freak server. The interactive documentation can be accessed at Freak's main endpoint, which by default is `localhost:4444`.
 
-The following screenshot shows the generated endpoints for the DL [example](https://raw.githubusercontent.com/danielgafni/freak/master/examples/dl_example.py):
+The following screenshot shows the generated endpoints for the DL [example](https://github.com/danielgafni/freak/blob/master/examples/dl_example.py):
 
 ![Sample Generated Docs](https://raw.githubusercontent.com/danielgafni/freak/master/resources/swagger.png)
 
