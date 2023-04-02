@@ -4,6 +4,9 @@ import time
 import uvicorn
 
 
+# this code is taken from freqtrade
+
+
 def asyncio_setup() -> None:  # pragma: no cover
     # Set eventloop for win32 setups
     # Reverts a change done in uvicorn 0.15.0 - which now sets the eventloop

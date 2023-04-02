@@ -62,7 +62,7 @@ class State(BaseModel):
 Freak will generate `put` endpoints for the `foo` and `baz` fields, and a `patch` endpoint for the `bar` field (as it's a `pydantic` model itself). This `patch` endpoint supports partial updates:
 
 ```shell
-curl -X 'PATCH' \            
+curl -X 'PATCH' \  
   'http://localhost:4444/set/bar' \
   -H 'accept: application/json' \
   -H 'Content-Type: application/json' \
@@ -74,7 +74,7 @@ curl -X 'PATCH' \
 
 
 ```shell
-curl -X 'PATCH' \            
+curl -X 'PATCH' \  
   'http://localhost:4444/set/bar' \
   -H 'accept: application/json' \
   -H 'Content-Type: application/json' \
