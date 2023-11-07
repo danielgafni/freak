@@ -1,16 +1,14 @@
-from typing import TypeVar, Any, Optional, List
+import operator
+from logging import getLogger
+from typing import Any, List, Optional, TypeVar
 
-from fastapi import FastAPI, APIRouter
+from fastapi import APIRouter, FastAPI, Query
 from pydantic import BaseModel
-
+from starlette.requests import Request
 from starlette.responses import JSONResponse
 from uvicorn import Config
-from logging import getLogger
-from starlette.requests import Request
-from fastapi import Query
-import operator
 
-from freak.uvicorn_threaded import UvicornServer
+from freak.uvicorn_threaded import ThreadedUvicorn
 
 logger = getLogger(__name__)
 
@@ -83,6 +81,8 @@ class Freak:
         self.port = port
         self.uvicorn_log_level = uvicorn_log_level
 
+        self.should_stop = False
+
     def control(self, state: T, serve: bool = True):
         if not state.Config.allow_mutation:
             state.Config.allow_mutation = True
@@ -96,11 +96,19 @@ class Freak:
             self.serve()
 
     def serve(self):
-        server = UvicornServer(
+        self.server = ThreadedUvicorn(
             config=Config(app=self.app, host=self.host, port=self.port, log_level=self.uvicorn_log_level)
         )
-        server.run_in_thread()
-        # logger.info(f"Running Freak on http://{self.host}:{self.port}")
+        self.server.start()
+        logger.info(f"Running Freak at {self.host}:{self.port}")
+
+    def stop(self):
+        logger.info("Stopping Freak Server")
+        self.server.stop()
+
+    @property
+    def running(self) -> bool:
+        return self.server.thread.is_alive()
 
     def add_routes(self, app: FastAPI, state: T) -> FastAPI:
         init_state = state.copy(deep=True)

@@ -10,7 +10,10 @@ keywords = ["state", "control", "remote", "application"]
 classifiers = [
     "Topic :: Software Development :: Libraries :: Python Modules",
     "Topic :: Utilities",
-    "Programming Language :: Python"
+    "Programming Language :: Python :: 3.8",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
 ]
 
 [tool.poetry.dependencies]
@@ -22,13 +25,30 @@ uvicorn = "*"
 pytest = "^7.2.2"
 httpx = "^0.23.3"
 black = "^23.1.0"
-ruff = "^0.0.259"
 pre-commit = "^3.2.1"
 pyright = "^1.1.300"
+ruff = "^0.1.4"
 
 [build-system]
 requires = ["poetry-core"]
 build-backend = "poetry.core.masonry.api"
+
+
+[tool.poetry-dynamic-versioning]
+enable = true
+strict = false
+vcs = "git"
+style = "pep440"
+dirty = true
+bump = true
+metadata = false
+
+[tool.poetry-dynamic-versioning.substitution]
+files = [
+    "pyproject.toml",
+    "freak/_version.py"
+]
+
 
 [tool.pytest.ini_options]
 addopts = "--doctest-modules"
@@ -55,6 +75,7 @@ exclude = '''
 '''
 
 [tool.ruff]
+extend-select = ["I"]
 target-version = "py38"
 line-length = 120
 src = [

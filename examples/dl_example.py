@@ -1,10 +1,10 @@
+from logging import basicConfig
 from time import sleep
 from typing import List
 
 from pydantic import BaseModel
 
 from freak import control
-from logging import basicConfig
 
 
 class Head(BaseModel):
@@ -22,6 +22,7 @@ class Checkpoints(BaseModel):
 
 
 class State(BaseModel):
+    training_stopped: bool = False
     lr: float = 1e-3
     checkpoints: Checkpoints = Checkpoints()
     model: Model = Model()
@@ -39,11 +40,14 @@ if __name__ == "__main__":
     basicConfig(level="INFO")
 
     state = State()
-    control(state)
+    server = control(state)
 
     current_epoch = 0
 
-    while True:
+    while not state.training_stopped:
         print(f"state: {state}")
         epoch_loop(state, current_epoch)
         current_epoch += 1
+    else:
+        print("Training stopped!")
+        server.stop()
