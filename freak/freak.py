@@ -8,7 +8,7 @@ from starlette.requests import Request
 from starlette.responses import JSONResponse
 from uvicorn import Config
 
-from freak.uvicorn_threaded import UvicornServer
+from freak.uvicorn_threaded import ThreadedUvicorn
 
 logger = getLogger(__name__)
 
@@ -81,6 +81,8 @@ class Freak:
         self.port = port
         self.uvicorn_log_level = uvicorn_log_level
 
+        self.should_stop = False
+
     def control(self, state: T, serve: bool = True):
         if not state.Config.allow_mutation:
             state.Config.allow_mutation = True
@@ -94,14 +96,19 @@ class Freak:
             self.serve()
 
     def serve(self):
-        self.server = UvicornServer(
+        self.server = ThreadedUvicorn(
             config=Config(app=self.app, host=self.host, port=self.port, log_level=self.uvicorn_log_level)
         )
-        self.server.run_in_thread()
-        # logger.info(f"Running Freak on http://{self.host}:{self.port}")
+        self.server.start()
+        logger.info(f"Running Freak at {self.host}:{self.port}")
 
     def stop(self):
-        self.server.cleanup()
+        logger.info("Stopping Freak Server")
+        self.server.stop()
+
+    @property
+    def running(self) -> bool:
+        return self.server.thread.is_alive()
 
     def add_routes(self, app: FastAPI, state: T) -> FastAPI:
         init_state = state.copy(deep=True)
@@ -109,10 +116,6 @@ class Freak:
         router = APIRouter(prefix=self.prefix)
 
         state_name = state.__repr_name__()
-
-        @router.post("/stop", description="Stop the Freak server", tags=["stop"])
-        async def stop_server():  # pyright: ignore
-            self.stop()
 
         @router.get("/get", description=f"Get the whole {state_name}", tags=[state_name])
         async def get_state() -> type(state):  # pyright: ignore
