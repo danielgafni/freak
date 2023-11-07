@@ -96,11 +96,14 @@ class Freak:
             self.serve()
 
     def serve(self):
-        server = UvicornServer(
+        self.server = UvicornServer(
             config=Config(app=self.app, host=self.host, port=self.port, log_level=self.uvicorn_log_level)
         )
-        server.run_in_thread()
+        self.server.run_in_thread()
         # logger.info(f"Running Freak on http://{self.host}:{self.port}")
+
+    def stop(self):
+        self.server.cleanup()
 
     def add_routes(self, app: FastAPI, state: T) -> FastAPI:
         init_state = state.copy(deep=True)
@@ -108,6 +111,10 @@ class Freak:
         router = APIRouter(prefix=self.prefix)
 
         state_name = state.__repr_name__()
+
+        @router.post("/stop", description=f"Stop the Freak server", tags=["stop"])
+        async def stop_server():  # pyright: ignore
+            self.stop()
 
         @router.get("/get", description=f"Get the whole {state_name}", tags=[state_name])
         async def get_state() -> type(state):  # pyright: ignore

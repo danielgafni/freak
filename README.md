@@ -85,7 +85,7 @@ curl -X 'PATCH' \
 
 Because Freak is using `FastAPI`, it's possible to use auto-generated documentation to interact with the Freak server. The interactive documentation can be accessed at Freak's main endpoint, which by default is `localhost:4444`.
 
-The following screenshot shows the generated endpoints for the ML [example](https://github.com/danielgafni/freak/blob/master/examples/dl_example.py). Warning: making ML pipelines less reproducible isn't the brightest idea!
+The following screenshot shows the generated endpoints for the ML [example](https://github.com/danielgafni/freak/blob/master/examples/dl_example.py). Warning: making ML pipelines less reproducible isn't the brightest idea! But it's convenient to use Freak for stopping a training.
 
 ![Sample Generated Docs](https://raw.githubusercontent.com/danielgafni/freak/master/resources/swagger.png)
 
