@@ -30,6 +30,23 @@ ruff = "^0.1.4"
 requires = ["poetry-core"]
 build-backend = "poetry.core.masonry.api"
 
+
+[tool.poetry-dynamic-versioning]
+enable = true
+strict = false
+vcs = "git"
+style = "pep440"
+dirty = true
+bump = true
+metadata = false
+
+[tool.poetry-dynamic-versioning.substitution]
+files = [
+    "pyproject.toml",
+    "freak/_version.py"
+]
+
+
 [tool.pytest.ini_options]
 addopts = "--doctest-modules"
 log_cli = true
