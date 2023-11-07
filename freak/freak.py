@@ -1,14 +1,12 @@
-from typing import TypeVar, Any, Optional, List
+import operator
+from logging import getLogger
+from typing import Any, List, Optional, TypeVar
 
-from fastapi import FastAPI, APIRouter
+from fastapi import APIRouter, FastAPI, Query
 from pydantic import BaseModel
-
+from starlette.requests import Request
 from starlette.responses import JSONResponse
 from uvicorn import Config
-from logging import getLogger
-from starlette.requests import Request
-from fastapi import Query
-import operator
 
 from freak.uvicorn_threaded import UvicornServer
 
@@ -112,7 +110,7 @@ class Freak:
 
         state_name = state.__repr_name__()
 
-        @router.post("/stop", description=f"Stop the Freak server", tags=["stop"])
+        @router.post("/stop", description="Stop the Freak server", tags=["stop"])
         async def stop_server():  # pyright: ignore
             self.stop()
 

@@ -1,10 +1,12 @@
-from typing import List, Tuple
 import json
+from typing import List, Tuple
+
 import pytest
 from fastapi import FastAPI
-from pydantic import BaseModel
-from freak import control
 from fastapi.testclient import TestClient
+from pydantic import BaseModel
+
+from freak import control
 
 
 class Head(BaseModel):

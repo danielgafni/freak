@@ -1,10 +1,10 @@
+from logging import basicConfig
 from time import sleep
 from typing import List
 
 from pydantic import BaseModel
 
 from freak import control
-from logging import basicConfig
 
 
 class Head(BaseModel):

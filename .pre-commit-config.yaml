@@ -36,9 +36,9 @@ repos:
         language: system
         pass_filenames: false
       # formatter
-      - id: black
-        name: black
-        entry: black .
+      - id: ruff-format
+        name: ruff format
+        entry: ruff format .
         language: system
         pass_filenames: false
         # typecheck

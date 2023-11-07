@@ -3,7 +3,6 @@ import time
 
 import uvicorn
 
-
 # this code is taken from freqtrade
 
 
