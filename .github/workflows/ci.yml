@@ -46,7 +46,7 @@ jobs:
       - name: Install dependencies
         run: poetry install --all-extras --sync
       - name: Run tests
-        run: pytest -v .
+        run: pytest -v tests
 
   lint:
     name: lint py=${{ matrix.py }} ${{ matrix.os }}
