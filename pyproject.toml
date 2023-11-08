@@ -55,25 +55,6 @@ addopts = "--doctest-modules"
 log_cli = true
 log_level = "INFO"
 
-[tool.black]
-line-length = 120
-target-version = ['py38', 'py39', 'py310', 'py311']
-include = '\.pyi?$'
-exclude = '''
-/(
-    \.eggs
-  | \.git
-  | \.hg
-  | \.mypy_cache
-  | \.pytest_cache
-  | \.ruff_cache
-  | \.pyright_cache
-  | \.venv
-  | build
-  | dist
-  )/
-'''
-
 [tool.ruff]
 extend-select = ["I"]
 target-version = "py38"
@@ -108,3 +89,13 @@ exclude = [
 ]
 [tool.ruff.isort]
 known-first-party = ["freak", "tests"]
+
+[tool.pyright]
+reportPropertyTypeMismatch = true
+reportImportCycles = true
+reportWildcardImportFromLibrary = true
+reportUntypedFunctionDecorator = true
+reportUntypedClassDecorator = true
+exclude = [
+    "examples/lightning_callback.py"
+]

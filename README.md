@@ -85,7 +85,50 @@ curl -X 'PATCH' \
 
 Because Freak is using `FastAPI`, it's possible to use auto-generated documentation to interact with the Freak server. The interactive documentation can be accessed at Freak's main endpoint, which by default is `localhost:4444`.
 
-The following screenshot shows the generated endpoints for the ML [example](https://github.com/danielgafni/freak/blob/master/examples/dl_example.py). Warning: making ML pipelines less reproducible isn't the brightest idea! But it's convenient to use Freak for stopping a training.
+A more useful example is the following PyTorch Lightning Callback which stops training when the `state.should_stop` field is set to `True`:
+
+```python
+from typing import Optional
+
+import lightning as L
+from freak import Freak
+from lightning.pytorch.utilities.distributed import rank_zero_only
+from pydantic import BaseModel
+
+
+class TrainingState(BaseModel):
+    should_stop: bool = False
+
+
+class TrainingStopCallback(L.Callback):
+    """
+    Callback which stops training when self.state.shoudl_stop is set to True.
+    """
+
+    def __init__(self, freak: Optional[Freak] = None):
+        self.freak = freak if freak is not None else Freak(host="127.0.0.1")
+        self.state = TrainingState()
+
+    @rank_zero_only
+    def on_train_start(self, trainer: "L.Trainer", pl_module: "L.LightningModule") -> None:
+        self.freak.control(self.state)  # launch the Freak server in a background thread
+
+    def on_train_epoch_end(self, trainer: "L.Trainer", pl_module: "L.LightningModule") -> None:
+        self.state = trainer.strategy.broadcast(self.state, 0)
+
+        if self.state.should_stop:  # call the Freak API to set this to True
+            # this triggers lightning to stop training
+            trainer.should_stop = True
+            trainer.strategy.barrier()
+
+    @rank_zero_only
+    def on_train_end(self, trainer: "L.Trainer", pl_module: "L.LightningModule") -> None:
+        self.freak.stop()
+```
+
+### Generated OpenAPI UI
+
+The following screenshot shows the generated endpoints for the [ML example](https://github.com/danielgafni/freak/blob/master/examples/dl_example.py). Warning: making ML pipelines less reproducible by changing hyperparameters on the fly isn't the brightest idea!
 
 ![Sample Generated Docs](https://raw.githubusercontent.com/danielgafni/freak/master/resources/swagger.png)
 
